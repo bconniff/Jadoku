@@ -36,8 +36,8 @@ import java.util.*;
 
 public class SudokuInputPanel extends JPanel {
    private final int n, k;
-   private int[][] vals;
-   private java.util.List<NumberField> in;
+   private final int[][] vals;
+   private final NumberField[][] nums;
 
    private class SudokuInputBox extends JPanel {
       private Border getBorder(int i, int w, Color c) {
@@ -71,7 +71,7 @@ public class SudokuInputPanel extends JPanel {
             });
 
             add(f);
-            in.add(f);
+            nums[x][y] = f;
          }
       }
    }
@@ -81,13 +81,29 @@ public class SudokuInputPanel extends JPanel {
    }
 
    public void clear() {
-      for (NumberField f: in)
-         f.setText("");
+      for (int x = 0; x < n; x++)
+         for (int y = 0; y < n; y++)
+            nums[x][y].setText("");
+   }
+
+   public void setVals(int[][] v) {
+      if (v == null) {
+         clear();
+      } else {
+         for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+               final int i = v[x][y];
+               final String s = (i == 0) ? "" : Integer.toString(i);
+               nums[x][y].setText(s);
+            }
+         }
+      }
    }
 
    public void setEnabled(boolean v) {
-      for (NumberField f: in)
-         f.setEnabled(v);
+      for (int x = 0; x < n; x++)
+         for (int y = 0; y < n; y++)
+            nums[x][y].setEnabled(v);
    }
 
    public SudokuInputPanel(int k) {
@@ -95,12 +111,18 @@ public class SudokuInputPanel extends JPanel {
       this.k = k;
       n = k*k;
       vals = new int[n][n];
-      in = new ArrayList<NumberField>(n*n);
+      nums = new NumberField[n][n];
 
       setLayout(new GridLayout(k,k));
       setBorder(BorderFactory.createTitledBorder("Input"));
 
       for (int i = 0; i < n; i++)
          add(new SudokuInputBox(i));
+   }
+
+   public SudokuInputPanel(int k, int[][] vals) {
+      this(k);
+      if (vals != null)
+         setVals(vals);
    }
 }

@@ -27,14 +27,34 @@
  */
 
 import jadoku.gui.SudokuGui;
+import jadoku.solver.JDReader;
 import java.awt.*;
 
 public class Jadoku {
    public static void main(String[] args) {
-      EventQueue.invokeLater(new Runnable() {
-         public void run() {
-            new SudokuGui(3).setVisible(true);
+      if (args.length == 0) {
+         EventQueue.invokeLater(new Runnable() {
+            public void run() {
+               new SudokuGui(3).setVisible(true);
+            }
+         });
+      } else {
+         for (String a: args) {
+            try {
+               final JDReader r = new JDReader(3, a);
+               while (r.hasNext()) {
+                  final int[][] puzzle = r.next();
+                  EventQueue.invokeLater(new Runnable() {
+                     public void run() {
+                        new SudokuGui(3,puzzle).setVisible(true);
+                     }
+                  });
+               }
+               r.close();
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
          }
-      });
+      }
    }
 }

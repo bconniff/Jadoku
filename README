@@ -1,9 +1,9 @@
 JAVA SUDOKU SOLVER
 
-Jadoku is a program for solving Sudoku puzzles using pencil-and-paper techniques,
-written in Java and licensed under the 3-clause BSD license. You can find license
-details in the LICENSE file, located in the root directory of the source
-distribution.
+Jadoku is a program for solving Sudoku puzzles using pencil-and-paper
+techniques, written in Java and licensed under the 3-clause BSD license. You
+can find license details in the LICENSE file, located in the root directory of
+the source distribution.
 
 The program is designed to be fast, and only use guessing minimally. Currently,
 the engine marks up the puzzle and uncovers numbers by finding singletons and
@@ -12,9 +12,18 @@ is still unsolved, the engine makes a guess, and repeats the process.
 
 The program will also detect if a puzzle is unsolvable.
 
+FILE FORMAT
+
+This program can take a list of files as arguments. Each file contains a list
+of puzzles, one per line. Each puzzle is a string of 81 digits with no spaces,
+representing the cells on a Sudoku grid from top-left to bottom-right. Cells
+numbered as 0 represent empty cells.
+
+In the Jadoku GUI, each puzzle will be opened in an individual window.
+
 COMPILATION
 
-Building the anagram solver is simple. You will need Apache's Ant build system,
+Building the sudoku solver is simple. You will need Apache's Ant build system,
 and a minimum JDK version of 1.5.
 
 To compile, simply navigate to the root directory of the solver, and enter the
@@ -26,7 +35,7 @@ This will produce a jar file, titled "Jadoku.jar", as the output. This jar can
 be run by the usual methods; double-clicking the file if you're on Windows or
 Mac, or using the command:
 
-   $ java -jar Anagram.jar
+   $ java -jar Jadoku.jar [file]...
 
 If you're on UNIX or Linux.
 
@@ -35,7 +44,7 @@ COMMAND LINE TOOL
 Jadoku comes with a command line tool as well, which can be invoked with the
 command:
 
-   $ java -cp Anagra.jar Cli
+   $ java -cp Jadoku.jar Cli [file]...
 
 This tool takes a list of files as arguments. Each file contains a list of
 puzzles, one per line. Each puzzle is a string of 81 digits with no spaces,

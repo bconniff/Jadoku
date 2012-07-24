@@ -32,11 +32,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SudokuGui extends JFrame {
-   public SudokuGui(int k) {
-      super();
+   public SudokuGui(int k) { this(k, null); }
+
+   public SudokuGui(int k, int[][] vals) {
+      super("Sudoku Solver");
       final JPanel main = new JPanel();
       final JPanel io = new JPanel();
-      final SudokuInputPanel in = new SudokuInputPanel(k);
+      final SudokuInputPanel in = new SudokuInputPanel(k, vals);
       final SudokuOutputPanel out = new SudokuOutputPanel(k);
       final SudokuControlPanel stat = new SudokuControlPanel(k, in, out);
 
@@ -53,6 +55,9 @@ public class SudokuGui extends JFrame {
 
       pack();
       setResizable(false);
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      final Point p = MouseInfo.getPointerInfo().getLocation();
+      final Dimension d = getSize();
+      setLocation(p.x-(d.width/2), p.y-(d.height/2));
    }
 }
