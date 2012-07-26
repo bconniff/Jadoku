@@ -28,16 +28,17 @@
 
 package jadoku.solver;
 
-public class JDSolver {
+public class Solver {
    private final long time;
-   private JDGrid solution;
+   private Grid solution;
    private int guesses = 0;
    private int badGuesses = 0;
 
-   public JDSolver(int k, int[][] in) {
-      final int n = k*k;
-      final JDGrid g = new JDGrid(k);
+   public Solver(int k, int[][] in) {
       final long startTime = System.currentTimeMillis();
+
+      final int n = k*k;
+      final Grid g = new Grid(k);
 
       for (int x = 0; x < in.length; x++) {
          for (int y = 0; y < in[x].length; y++) {
@@ -55,13 +56,13 @@ public class JDSolver {
       time = endTime - startTime;
    }
 
-   private JDGrid solve(JDGrid in) {
+   private Grid solve(Grid in) {
       if (in.validate()) {
          if (in.solved()) {
             return in;
          } else {
-            final JDGrid g = new JDGrid(in);
-            final JDCell c = g.getFirstUns();
+            final Grid g = new Grid(in);
+            final Cell c = g.getFirstUns();
             final int guess = c.getFirstPos();
 
             guesses++;
@@ -69,7 +70,7 @@ public class JDSolver {
             c.setVal(guess);
             g.simplify();
 
-            final JDGrid ng = solve(g);
+            final Grid ng = solve(g);
 
             if (ng == null) {
                badGuesses++;

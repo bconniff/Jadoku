@@ -29,36 +29,80 @@
 package jadoku.solver;
 
 import java.util.*;
-import java.io.*;
 
-public class JDReader {
-   private final Scanner in;
-   private final int n, k;
+class Cell {
+   private final List<Zone> zones = new ArrayList<Zone>();
+   private Set<Integer> pos = new HashSet<Integer>();
+   private int val = -1;
 
-   public JDReader(int k, String file) throws IOException {
-      in = new Scanner(new File(file));
-      this.k = k;
-      n = k*k;
+   private Cell(Zone... zon) {
+      for (Zone z: zon)
+         zones.add(z);
    }
 
-   public boolean hasNext() { return in.hasNextLine(); }
-   public void close() { in.close(); }
+   public Cell(Cell in, Zone... zon) {
+      this(zon);
 
-   public int[][] next() {
-      final int n = k*k;
-      final int[][] g = new int[n][n];
-
-      int x = 0, y = 0;
-
-      final String line = in.nextLine();
-      for (int i = 0; i < line.length(); i++) {
-         g[x][y] = line.charAt(i) - '0';
-         if (++x == n) {
-            y++;
-            x = 0;
-         }
+      if (in.pos == null) {
+         val = in.val;
+         pos = null;
+      } else {
+         for (int i: in.pos)
+            pos.add(i);
       }
+   }
 
-      return g;
+   public Cell(int n, Zone... zon) {
+      this(zon);
+
+      for (int i = 1; i <= n; i++)
+         pos.add(i);
+   }
+
+   public boolean solved() {
+      return val != -1;
+   }
+
+   public void setVal(int v) {
+      val = v;
+      pos = null;
+
+      for (Zone z: zones)
+         z.strike(this);
+   }
+
+   public int getVal() {
+      return val;
+   }
+
+   public void strike(int v) {
+      if (pos != null) {
+         pos.remove(v);
+
+         if (pos.size() == 1)
+            setVal(pos.iterator().next());
+      }
+   }
+
+   public Set<Integer> getPos() {
+      return pos;
+   }
+
+   public int numPos() {
+      return (pos == null)
+         ? 0
+         : pos.size();
+   }
+
+   public Integer getFirstPos() {
+      Integer ret = null;
+      for (int i: pos)
+         if (ret == null || i < ret)
+            ret = i;
+      return ret;
+   }
+
+   public String toString() {
+      return (val == -1) ? "." : Integer.toString(val);
    }
 }

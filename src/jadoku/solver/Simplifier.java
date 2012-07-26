@@ -28,4 +28,37 @@
 
 package jadoku.solver;
 
-public class JDFormatException extends RuntimeException { }
+public class Simplifier {
+   private final long time;
+   private final boolean solved;
+   private Grid simplified;
+
+   public Simplifier(int k, int[][] in) {
+      final int n = k*k;
+      simplified = new Grid(k);
+      final long startTime = System.currentTimeMillis();
+
+      for (int x = 0; x < in.length; x++) {
+         for (int y = 0; y < in[x].length; y++) {
+            int i = in[x][y];
+            if (i > 0 && i <= n)
+               simplified.setVal(y, x, i);
+         }
+      }
+
+      simplified.simplify();
+      solved = simplified.solved();
+
+      final long endTime = System.currentTimeMillis();
+      
+      time = endTime - startTime;
+   }
+
+   public long time() { return time; }
+   public boolean solved() { return solved; }
+   public int[][] getVals() { return simplified.getVals(); }
+
+   public String toString() {
+      return simplified.toString();
+   }
+}

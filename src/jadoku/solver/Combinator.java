@@ -31,7 +31,7 @@ package jadoku.solver;
 /* Combination algorithm by Donald Knuth.
  * Adapted from C by Brendan Conniff. */
 
-public class Combinator {
+class Combinator {
    private final int n, k;
    private final int[] c, a;
    private int j, x;

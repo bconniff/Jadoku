@@ -33,14 +33,14 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import java.awt.*;
 
-public class NumberField extends JTextField {
-   private final int limit;
+class NumberField extends JTextField {
+   private final int max;
 
-   public NumberField(int limit) {
-      super();
+   public NumberField(int max) {
+      /*super();
       final Dimension d = getPreferredSize();
-      setPreferredSize(new Dimension(d.height,d.height));
-      this.limit = limit;
+      setPreferredSize(new Dimension(d.height,d.height));*/
+      this.max = max;
       setHorizontalAlignment(JTextField.CENTER);
    }
 
@@ -62,13 +62,18 @@ public class NumberField extends JTextField {
             return;
 
          char[] s = str.toCharArray();
-         String result = "";
          int len = getLength();
 
-         for (int i = 0; len < limit && i < s.length; i++) {
-            if (Character.isDigit(s[i])) {
-               result += Integer.toString(s[i] - '0');
-               len++;
+         String pre = getText(0, offs);
+         String post = getText(offs, getLength()-offs);
+         String result = "";
+
+         for (char c: s) {
+            if (!(len == 0 && c == '0')
+                  && Character.isDigit(c)
+                  && Integer.parseInt(pre+c+post) <= max) {
+               result += c;
+               pre += c;
             }
          }
 

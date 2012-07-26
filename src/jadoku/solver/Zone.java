@@ -30,45 +30,45 @@ package jadoku.solver;
 
 import java.util.*;
 
-public class JDZone {
-   private final JDCell[] cell;
-   private final Set<JDCell> unsolved = new HashSet<JDCell>();
+class Zone {
+   private final Cell[] cell;
+   private final Set<Cell> unsolved = new HashSet<Cell>();
    private final Set<Integer> sets = new HashSet<Integer>();
    private final int k, n;
 
-   public JDZone(int k) {
+   public Zone(int k) {
       this.k = k;
       this.n = k*k;
-      cell = new JDCell[k*k];
+      cell = new Cell[k*k];
    }
 
-   public JDCell getFirstUns() {
+   public Cell getFirstUns() {
       if (unsolved.size() > 0)
-         for (JDCell c: cell)
+         for (Cell c: cell)
             if (c.getVal() == -1)
                return c;
       return null;
    }
 
-   public void put(int i, JDCell c) {
+   public void put(int i, Cell c) {
       cell[i] = c;
       if (!c.solved())
          unsolved.add(c);
    }
 
-   public void strike(JDCell c) {
+   public void strike(Cell c) {
       unsolved.remove(c);
       final int v = c.getVal();
-      for (JDCell x: cell)
+      for (Cell x: cell)
          x.strike(v);
    }
 
    private boolean findSets(int size) {
-      final JDCell[] uns = unsolved.toArray(new JDCell[0]);
+      final Cell[] uns = unsolved.toArray(new Cell[0]);
       final Combinator c = new Combinator(uns.length, size);
       final Set<Integer> pos = new HashSet<Integer>();
-      final Set<JDCell> cs = new HashSet<JDCell>();
-      final Set<JDCell> ncs = new HashSet<JDCell>();
+      final Set<Cell> cs = new HashSet<Cell>();
+      final Set<Cell> ncs = new HashSet<Cell>();
 
       while (c.hasNext()) {
          final int[] idx = c.next();
@@ -89,7 +89,7 @@ public class JDZone {
                continue;
             sets.add(b);
 
-            for (JDCell x: ncs)
+            for (Cell x: ncs)
                for (int i: pos)
                   x.strike(i);
             return true;
@@ -108,14 +108,14 @@ public class JDZone {
    }
 
    public boolean findSingletons() {
-      final Map<Integer,List<JDCell>> m = new HashMap<Integer,List<JDCell>>();
+      final Map<Integer,List<Cell>> m = new HashMap<Integer,List<Cell>>();
 
-      for (JDCell c: unsolved) {
+      for (Cell c: unsolved) {
          if (c.getVal() == -1) {
             for (int i: c.getPos()) {
-               List<JDCell> l = m.get(i);
+               List<Cell> l = m.get(i);
                if (l == null) {
-                  l = new ArrayList<JDCell>();
+                  l = new ArrayList<Cell>();
                   m.put(i, l);
                }
                l.add(c);
@@ -124,7 +124,7 @@ public class JDZone {
       }
 
       for (int i: m.keySet()) {
-         final List<JDCell> l = m.get(i);
+         final List<Cell> l = m.get(i);
          if (l != null && l.size() == 1) {
             l.get(0).setVal(i);
             return true;
@@ -145,7 +145,7 @@ public class JDZone {
    public boolean validate() {
       final Set<Integer> s = new HashSet<Integer>();
 
-      for (JDCell c: cell) {
+      for (Cell c: cell) {
          final int v = c.getVal();
          if (v != -1 && s.contains(v))
             return false;
@@ -157,13 +157,13 @@ public class JDZone {
 
    public void addSets(Set<Integer> i) { sets.addAll(i); }
    public Set<Integer> getSets() { return sets; }
-   public JDCell getCell(int i) { return cell[i]; }
+   public Cell getCell(int i) { return cell[i]; }
 
    public String toString() {
       String ret = "";
       int i = 0;
 
-      for (JDCell c: cell) {
+      for (Cell c: cell) {
          if (i != 0) {
             ret += " ";
          }

@@ -34,17 +34,17 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.util.*;
 
-public class SudokuInputPanel extends JPanel {
+class SudokuInputPanel extends JPanel {
    private final int n, k;
    private final int[][] vals;
    private final NumberField[][] nums;
 
    private class SudokuInputBox extends JPanel {
       private Border getBorder(int i, int w, Color c) {
-         final int t = (i < 3) ? 0 : w;
-         final int l = (i % 3 == 0) ? 0 : w;
-         final int r = ((i+1) % 3 == 0) ? 0 : w;
-         final int b = (i > 5) ? 0 : w;
+         final int t = (i < k) ? 0 : w;
+         final int l = (i % k == 0) ? 0 : w;
+         final int r = ((i+1) % k == 0) ? 0 : w;
+         final int b = (i > k*(k-1)-1) ? 0 : w;
 
          return BorderFactory.createMatteBorder(t,l,b,r,c);
       }
@@ -57,7 +57,7 @@ public class SudokuInputPanel extends JPanel {
          setBorder(getBorder(i, 1, Color.black));
 
          for (int j = 0; j < n; j++) {
-            final NumberField f = new NumberField(1);
+            final NumberField f = new NumberField(n);
             final int x = imk + (j%k), y = idk + (j/k);
 
             f.setBorder(getBorder(j, 1, Color.lightGray));

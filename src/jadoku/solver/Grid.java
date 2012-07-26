@@ -30,22 +30,22 @@ package jadoku.solver;
 
 import java.util.*;
 
-public class JDGrid {
-   private final JDZone[] row, col, box;
+class Grid {
+   private final Zone[] row, col, box;
    private final int k, n;
 
-   private JDGrid(int k, JDGrid g) {
+   private Grid(int k, Grid g) {
       this.k = k;
       n = k*k;
 
-      row = new JDZone[n];
-      col = new JDZone[n];
-      box = new JDZone[n];
+      row = new Zone[n];
+      col = new Zone[n];
+      box = new Zone[n];
 
       for (int i = 0; i < n; i++) {
-         row[i] = new JDZone(k);
-         col[i] = new JDZone(k);
-         box[i] = new JDZone(k);
+         row[i] = new Zone(k);
+         col[i] = new Zone(k);
+         box[i] = new Zone(k);
 
          if (g != null) {
             row[i].addSets(g.row[i].getSets());
@@ -57,9 +57,9 @@ public class JDGrid {
       for (int x = 0; x < n; x++) {
          for (int y = 0; y < n; y++) {
             final int b = x/k + k*(y/k);
-            final JDCell s = (g == null)
-                  ? new JDCell(n, row[y], col[x], box[b])
-                  : new JDCell(g.row[y].getCell(x), row[y], col[x], box[b]);
+            final Cell s = (g == null)
+                  ? new Cell(n, row[y], col[x], box[b])
+                  : new Cell(g.row[y].getCell(x), row[y], col[x], box[b]);
 
             row[y].put(x, s);
             col[x].put(y, s);
@@ -68,11 +68,11 @@ public class JDGrid {
       }
    }
 
-   public JDGrid(int k) {
+   public Grid(int k) {
       this(k, null);
    }
 
-   public JDGrid(JDGrid g) {
+   public Grid(Grid g) {
       this(g.k, g);
    }
 
@@ -80,8 +80,8 @@ public class JDGrid {
       col[x].setVal(y, val);
    }
 
-   private boolean validate(JDZone[] zone) {
-      for (JDZone z: zone)
+   private boolean validate(Zone[] zone) {
+      for (Zone z: zone)
          if (!z.validate())
             return false;
       return true;
@@ -102,7 +102,7 @@ public class JDGrid {
       String ret = "";
       boolean first = true;
 
-      for (JDZone z: row) {
+      for (Zone z: row) {
          if (i != 0)
             ret += "\n";
          ret += z.toString();
@@ -118,7 +118,7 @@ public class JDGrid {
       final int[][] ret = new int[n][n];
 
       for (int y = 0; y < n; y++) {
-         final JDZone r = row[y];
+         final Zone r = row[y];
          for (int x = 0; x < n; x++) {
             ret[x][y] = r.getCell(x).getVal();
          }
@@ -139,8 +139,8 @@ public class JDGrid {
       return "\n"+dashes+"+-"+dashes+"+"+dashes;
    }
 
-   private boolean simplify(JDZone[] zone) {
-      for (JDZone z: zone)
+   private boolean simplify(Zone[] zone) {
+      for (Zone z: zone)
          if (z.simplify())
             return true;
       return false;
@@ -150,9 +150,9 @@ public class JDGrid {
       while (simplify(box) || simplify(row) || simplify(col));
    }
 
-   public JDCell getFirstUns() {
-      for (JDZone z: row) {
-         final JDCell ret = z.getFirstUns();
+   public Cell getFirstUns() {
+      for (Zone z: row) {
+         final Cell ret = z.getFirstUns();
          if (ret != null)
             return ret;
       }

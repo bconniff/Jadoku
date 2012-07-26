@@ -26,8 +26,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-import jadoku.solver.JDReader;
-import jadoku.solver.JDSolver;
+import jadoku.solver.SudokuReader;
+import jadoku.solver.Solver;
 
 public class Cli {
    public static void main(String[] args) {
@@ -37,10 +37,10 @@ public class Cli {
          try {
             System.out.println("Reading from "+a);
             int i = 1;
-            JDReader r = new JDReader(3, a);
+            SudokuReader r = new SudokuReader(3, a);
             while (r.hasNext()) {
-               System.out.print("   #"+(i++)+": ");
-               JDSolver s = new JDSolver(3, r.next());
+               System.out.print("   Puzzle #"+(i++)+": ");
+               Solver s = new Solver(3, r.next());
                final long t = s.time();
                time += t;
                System.out.print(t+" ms");
@@ -52,10 +52,17 @@ public class Cli {
                      if (b > 0)
                         System.out.print(" ("+b+" wrong)");
                   }
+                  final int[][] vals = s.getVals();
+                  System.out.println();
+                  for (int y = 0; y < 9; y++) {
+                     System.out.print("      ");
+                     for (int x = 0; x < 9; x++)
+                        System.out.print(vals[x][y]);
+                     System.out.println();
+                  }
                } else {
-                  System.out.print(", no solution!");
+                  System.out.println(", no solution!");
                }
-               System.out.println();
             }
             r.close();
          } catch (Exception e) {

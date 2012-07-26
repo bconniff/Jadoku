@@ -28,16 +28,18 @@
 
 package jadoku.gui;
 
-import jadoku.solver.JDSolver;
+import jadoku.solver.Solver;
+import jadoku.solver.Simplifier;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class SudokuControlPanel extends JPanel {
+class SudokuControlPanel extends JPanel {
    private final JLabel time = new JLabel("", JLabel.LEFT);
    private final JLabel guesses = new JLabel("", JLabel.CENTER);
    private final JLabel status = new JLabel("Ready", JLabel.RIGHT);
+   private final JButton simplify = new JButton("Simplify");
    private final JButton solve = new JButton("Solve");
    private final JButton reset = new JButton("Reset");
    private final SudokuInputPanel in;
@@ -51,6 +53,7 @@ public class SudokuControlPanel extends JPanel {
 
       final JPanel action = new JPanel();
       action.setLayout(new GridLayout(1,2));
+      action.add(simplify);
       action.add(solve);
       action.add(reset);
 
@@ -68,6 +71,10 @@ public class SudokuControlPanel extends JPanel {
          public void actionPerformed(ActionEvent e) { runSolver(); }
       });
 
+      simplify.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) { runSimplifier(); }
+      });
+
       reset.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             in.clear();
@@ -80,17 +87,38 @@ public class SudokuControlPanel extends JPanel {
    }
 
    private void begin() {
+      in.setEnabled(false);
+      simplify.setEnabled(false);
+      solve.setEnabled(false);
+      reset.setEnabled(false);
+
       time.setText("");
       guesses.setText("");
       out.show(out.SOLVING);
       status.setText("Solving");
-
-      in.setEnabled(false);
-      solve.setEnabled(false);
-      reset.setEnabled(false);
    }
 
-   private void finish(JDSolver j) {
+   private void finish(Simplifier j) {
+      final int[][] v = j.getVals();
+      final long t = j.time();
+      time.setText("Time: "+t+" ms");
+
+      if (v == null) {
+         out.show(out.FAILED);
+         status.setText("Failed");
+      } else {
+         out.setVals(v);
+         out.show(out.MAIN);
+         status.setText("Success");
+      }
+
+      in.setEnabled(true);
+      simplify.setEnabled(true);
+      solve.setEnabled(true);
+      reset.setEnabled(true);
+   }
+
+   private void finish(Solver j) {
       final int[][] v = j.getVals();
       final long t = j.time();
       final int g = j.guesses(), b = j.badGuesses();
@@ -111,11 +139,25 @@ public class SudokuControlPanel extends JPanel {
       reset.setEnabled(true);
    }
 
+   private void runSimplifier() {
+      begin();
+      new Thread(new Runnable() {
+         public void run() {
+            final Simplifier j = new Simplifier(k, in.getVals());
+            EventQueue.invokeLater(new Runnable() {
+               public void run() {
+                  finish(j);
+               }
+            });
+         }
+      }).start();
+   }
+
    private void runSolver() {
       begin();
       new Thread(new Runnable() {
          public void run() {
-            final JDSolver j = new JDSolver(k, in.getVals());
+            final Solver j = new Solver(k, in.getVals());
             EventQueue.invokeLater(new Runnable() {
                public void run() {
                   finish(j);

@@ -27,7 +27,7 @@
  */
 
 import jadoku.gui.SudokuGui;
-import jadoku.solver.JDReader;
+import jadoku.solver.SudokuReader;
 import java.awt.*;
 
 public class Jadoku {
@@ -41,7 +41,7 @@ public class Jadoku {
       } else {
          for (String a: args) {
             try {
-               final JDReader r = new JDReader(3, a);
+               final SudokuReader r = new SudokuReader(3, a);
                while (r.hasNext()) {
                   final int[][] puzzle = r.next();
                   EventQueue.invokeLater(new Runnable() {

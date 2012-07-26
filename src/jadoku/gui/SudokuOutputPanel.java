@@ -34,7 +34,7 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.util.*;
 
-public class SudokuOutputPanel extends JPanel {
+class SudokuOutputPanel extends JPanel {
    public final static String READY = "r";
    public final static String MAIN = "m";
    public final static String FAILED = "f";
@@ -59,10 +59,10 @@ public class SudokuOutputPanel extends JPanel {
 
    private class SudokuOutputBox extends JPanel {
       private Border getBorder(int i, int w, Color c) {
-         final int t = (i < 3) ? 0 : w;
-         final int l = (i % 3 == 0) ? 0 : w;
-         final int r = ((i+1) % 3 == 0) ? 0 : w;
-         final int b = (i > 5) ? 0 : w;
+         final int t = (i < k) ? 0 : w;
+         final int l = (i % k == 0) ? 0 : w;
+         final int r = ((i+1) % k == 0) ? 0 : w;
+         final int b = (i > k*(k-1)-1) ? 0 : w;
 
          return BorderFactory.createMatteBorder(t,l,b,r,c);
       }
@@ -85,8 +85,10 @@ public class SudokuOutputPanel extends JPanel {
    }
 
    public void setVals(int[][] vals) {
-      for (OutputField l: out)
-         l.setText(Integer.toString(vals[l.y][l.x]));
+      for (OutputField l: out) {
+         final int t = vals[l.y][l.x];
+         l.setText((t > 0 && t <= n) ? Integer.toString(vals[l.y][l.x]) : "");
+      }
    }
 
    public void show(String s) {
