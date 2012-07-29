@@ -5,10 +5,10 @@ techniques, written in Java and licensed under the 3-clause BSD license. You
 can find license details in the LICENSE file, located in the root directory of
 the source distribution.
 
-The program is designed to be fast, and only use guessing minimally. Currently,
-the engine marks up the puzzle and uncovers numbers by finding singletons and
-naked sets. If no more numbers can be uncovered by this method and the puzzle
-is still unsolved, the engine makes a guess, and repeats the process.
+The program solves Sudoku grids by converting them into an instance of the
+exact cover problem, solving the exact cover with a Dancing Links
+implementation of Knuth's Algorithm X. This is significantly faster than the
+previous implementation which used a pencil-and-paper approach.
 
 The program will also detect if a puzzle is unsolvable.
 

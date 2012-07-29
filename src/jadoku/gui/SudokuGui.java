@@ -35,7 +35,7 @@ public class SudokuGui extends JFrame {
    public SudokuGui(int k) { this(k, null); }
 
    public SudokuGui(int k, int[][] vals) {
-      super("Sudoku Solver");
+      super("Sudoku Solver (DLX)");
       final JPanel main = new JPanel();
       final JPanel io = new JPanel();
       final SudokuInputPanel in = new SudokuInputPanel(k, vals);

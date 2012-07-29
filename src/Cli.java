@@ -31,32 +31,27 @@ import jadoku.solver.Solver;
 
 public class Cli {
    public static void main(String[] args) {
+      final int k = 3;
+      final int n = k*k;
       boolean first = true;
       long time = 0;
       for (String a: args) {
          try {
             System.out.println("Reading from "+a);
             int i = 1;
-            SudokuReader r = new SudokuReader(3, a);
+            SudokuReader r = new SudokuReader(k, a);
             while (r.hasNext()) {
                System.out.print("   Puzzle #"+(i++)+": ");
-               Solver s = new Solver(3, r.next());
+               Solver s = new Solver(k, r.next());
                final long t = s.time();
                time += t;
                System.out.print(t+" ms");
                if (s.solved()) {
-                  final int g = s.guesses();
-                  if (g > 0) {
-                     System.out.print(", "+g+" guesses");
-                     final int b = s.badGuesses();
-                     if (b > 0)
-                        System.out.print(" ("+b+" wrong)");
-                  }
                   final int[][] vals = s.getVals();
                   System.out.println();
-                  for (int y = 0; y < 9; y++) {
+                  for (int y = 0; y < n; y++) {
                      System.out.print("      ");
-                     for (int x = 0; x < 9; x++)
+                     for (int x = 0; x < n; x++)
                         System.out.print(vals[x][y]);
                      System.out.println();
                   }

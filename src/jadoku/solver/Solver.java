@@ -28,83 +28,79 @@
 
 package jadoku.solver;
 
+import java.util.*;
+
+/* Translates a sudoku puzzle into an instance of the exact cover problem,
+ * then uses Dancing Links to solve it */
 public class Solver {
+   private int[][] solution = null;
    private final long time;
-   private Grid solution;
-   private int guesses = 0;
-   private int badGuesses = 0;
+   private final int n, k, xOff, yOff, bOff;
 
-   public Solver(int k, int[][] in) {
-      final long startTime = System.currentTimeMillis();
+   private class Row {
+      public final int x, y, val;
 
-      final int n = k*k;
-      final Grid g = new Grid(k);
-
-      for (int x = 0; x < in.length; x++) {
-         for (int y = 0; y < in[x].length; y++) {
-            int i = in[x][y];
-            if (i > 0 && i <= n)
-               g.setVal(y, x, i);
-         }
+      public Row(int x, int y, int val) {
+         this.x = x;
+         this.y = y;
+         this.val = val;
       }
 
-      g.simplify();
-      solution = solve(g);
-
-      final long endTime = System.currentTimeMillis();
-      
-      time = endTime - startTime;
-   }
-
-   private Grid solve(Grid in) {
-      if (in.validate()) {
-         if (in.solved()) {
-            return in;
-         } else {
-            final Grid g = new Grid(in);
-            final Cell c = g.getFirstUns();
-            final int guess = c.getFirstPos();
-
-            guesses++;
-
-            c.setVal(guess);
-            g.simplify();
-
-            final Grid ng = solve(g);
-
-            if (ng == null) {
-               badGuesses++;
-
-               in.getFirstUns().strike(guess);
-               in.simplify();
-
-               return solve(in);
-            } else {
-               return ng;
-            }
-         }
-      } else {
-         return null;
+      public String toString() {
+         return "("+x+", "+y+") = "+val;
       }
    }
 
-   public int guesses() { return guesses; }
-   public int badGuesses() { return badGuesses; }
+   public Solver(int k, int[][] vals) {
+      final long start = System.currentTimeMillis();
+
+      this.k = k;
+      n = k*k;
+
+      final int n2 = n*n;
+
+      xOff = n2;
+      yOff = xOff + n2;
+      bOff = yOff + n2;
+
+      final DancingLinks<Row> solver = new DancingLinks<Row>(bOff+n2);
+
+      for (int x = 0; x < n; x++) {
+         for (int y = 0; y < n; y++) {
+            if (0 < vals[x][y] && vals[x][y] <= n)
+               addVal(solver, x, y, vals[x][y]-1);
+            else
+               for (int i = 0; i < n; i++)
+                  addVal(solver, x, y, i);
+         }
+      }
+
+      final List<Row> result = solver.solve();
+
+      if (result != null) {
+         solution = new int[n][n];
+         for (Row r: result)
+            solution[r.x][r.y] = r.val;
+      }
+
+      final long stop = System.currentTimeMillis();
+      time = stop - start;
+   }
+
+   private int bNum(int x, int y) {
+      return k*(y/k) + (x/k);
+   }
+
+   private void addVal(DancingLinks<Row> s, int x, int y, int val) {
+      final int[] data = new int[4];
+      data[0] = n*y + x;
+      data[1] = xOff + (n*x + val);
+      data[2] = yOff + (n*y + val);
+      data[3] = bOff + (n*bNum(x,y) + val);
+      s.addRow(new Row(x,y,val+1), data);
+   }
+
    public long time() { return time; }
-
-   public boolean solved() {
-      return solution != null;
-   }
-
-   public int[][] getVals() {
-      return (solution == null)
-         ? null
-         : solution.getVals();
-   }
-
-   public String toString() {
-      return (solution == null)
-         ? "No solution"
-         : solution.toString();
-   }
+   public int[][] getVals() { return solution; }
+   public boolean solved() { return solution != null; }
 }
