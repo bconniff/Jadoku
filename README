@@ -1,7 +1,7 @@
 JAVA SUDOKU SOLVER
 
-Jadoku is a program for solving Sudoku puzzles using pencil-and-paper
-techniques, written in Java and licensed under the 3-clause BSD license. You
+Jadoku is a program for solving Sudoku puzzles using Knuth's Dancing Links
+algortihm, written in Java and licensed under the 3-clause BSD license. You
 can find license details in the LICENSE file, located in the root directory of
 the source distribution.
 
